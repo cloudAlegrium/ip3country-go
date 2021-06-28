@@ -17,6 +17,7 @@ func New() *CountryLookup {
     b, err := ioutil.ReadFile("lookup-data/ip_supalite.table")
     if err != nil {
         fmt.Print(err)
+        return nil
     }
     index := 0
     country_codes := make([]string, 243)
@@ -34,12 +35,10 @@ func New() *CountryLookup {
             break
         }
     }
-    
 
     var last_end_range uint64 = 0
-    var idx int = 0
+    var table_idx int = 0
     for ; index < len(b); {
-        // var count uint64
         var count int = 0
         n1 := b[index]
         index += 1
@@ -60,9 +59,9 @@ func New() *CountryLookup {
         last_end_range += uint64(count * 256)
         cc := b[index]
         index += 1
-        ip_ranges[idx] = last_end_range
-        country_table[idx] = country_codes[cc]
-        idx += 1
+        ip_ranges[table_idx] = last_end_range
+        country_table[table_idx] = country_codes[cc]
+        table_idx += 1
     }
     return &CountryLookup {
         country_codes: country_codes,
