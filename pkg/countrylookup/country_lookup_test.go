@@ -1,7 +1,9 @@
 package countrylookup
 
 import (
+    "math/rand"
     "testing"
+    "time"
 )
 
 func TestHardcodedIPs(t *testing.T) {
@@ -69,5 +71,37 @@ func TestHardcodedIPs(t *testing.T) {
                 t.Errorf("Expected country %s but got %s", tt.country, ans)
             }
         })
+    }
+}
+
+func lookup_ip(lookup *CountryLookup, ip_number uint64) string {
+    result, ok := lookup.LookupIpNumber(ip_number)
+    if !ok {
+        return "--"
+    }
+    return result
+}
+
+func TestRandom(t *testing.T) {
+    lookup := New()
+    rand.Seed(time.Now().UnixNano())
+    for i := 1; i < len(lookup.ip_ranges); i++ {
+        max := lookup.ip_ranges[i] - 1
+        min := lookup.ip_ranges[i - 1]
+        
+        expected := lookup.country_table[i]
+        if lookup_ip(lookup, min) != expected {
+            t.Errorf("Expected %s but got %s", expected, lookup_ip(lookup, min))
+        }
+        if lookup_ip(lookup, max) != expected {
+            t.Errorf("Expected %s but got %s", expected, lookup_ip(lookup, max))
+        }
+
+        for j := 1; j < 100; j++ {
+            random_ip := uint64(rand.Float64() * float64(max - min) + float64(min))
+            if lookup_ip(lookup, random_ip) != expected {
+                t.Errorf("Expected %s but got %s", expected, lookup_ip(lookup, random_ip))
+            }
+        }
     }
 }

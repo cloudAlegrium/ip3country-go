@@ -43,14 +43,14 @@ func New() *CountryLookup {
         var count int = 0
         n1 := b[index]
         index += 1
-        if (n1 < 240) {
+        if n1 < 240 {
             count = int(n1)
-        } else if (n1 == 242) {
+        } else if n1 == 242 {
             n2 := int(b[index])
             n3 := int(b[index + 1])
             index += 2
             count = n2 | n3 << 8
-        } else if (n1 == 243) {
+        } else if n1 == 243 {
             n2 := int(b[index])
             n3 := int(b[index + 1])
             n4 := int(b[index + 2])
@@ -72,29 +72,13 @@ func New() *CountryLookup {
 }
 
 func (l *CountryLookup) LookupIpString(ip_string string) (response string, ok bool) {
-    if (ip_string == "") {
-        return "",false
+    if ip_string == "" {
+        return "", false
     }
-    parts := strings.Split(ip_string, ".")
-    if (len(parts) != 4) {
-        return "",false
-    }
+    one, two, three, four, ok := GetIpNumbers(ip_string)
 
-    one, err := strconv.Atoi(parts[0])
-    if err != nil {
-        return "",false
-    }
-    two, err2 := strconv.Atoi(parts[1])
-    if err2 != nil {
-        return "",false
-    }
-    three, err3 := strconv.Atoi(parts[2])
-    if err3 != nil {
-        return "",false
-    }
-    four, err4 := strconv.Atoi(parts[3])
-    if err4 != nil {
-        return "",false
+    if !ok {
+        return "", false
     }
 
     ipNumber := uint64(
@@ -108,7 +92,7 @@ func (l *CountryLookup) LookupIpString(ip_string string) (response string, ok bo
 func (l *CountryLookup) LookupIpNumber(ip_number uint64) (response string, ok bool) {
     index := l.BinarySearch(ip_number)
     cc := l.country_table[index]
-    if (cc == "--") {
+    if cc == "--" {
         return "", false
     }
     return cc, true
@@ -120,7 +104,7 @@ func (l *CountryLookup) BinarySearch(ip_number uint64) int {
     var mid int
     for ; min < max; {
         mid = (min + max) >> 1
-        if (l.ip_ranges[mid] <= ip_number) {
+        if l.ip_ranges[mid] <= ip_number {
             min = mid + 1
         } else {
             max = mid
@@ -128,4 +112,31 @@ func (l *CountryLookup) BinarySearch(ip_number uint64) int {
     }
 
     return min
+}
+
+func GetIpNumbers(ip_string string) (one int, two int, three int, four int, ok bool) {
+    parts := strings.Split(ip_string, ".")
+    if (len(parts) != 4) {
+        return 0,0,0,0,false
+    }
+
+    var err error
+
+    one, err = strconv.Atoi(parts[0])
+    if err != nil {
+        return 0,0,0,0,false
+    }
+    two, err = strconv.Atoi(parts[1])
+    if err != nil {
+        return 0,0,0,0,false
+    }
+    three, err = strconv.Atoi(parts[2])
+    if err != nil {
+        return 0,0,0,0,false
+    }
+    four, err = strconv.Atoi(parts[3])
+    if err != nil {
+        return 0,0,0,0,false
+    }
+    return one, two, three, four, true
 }
