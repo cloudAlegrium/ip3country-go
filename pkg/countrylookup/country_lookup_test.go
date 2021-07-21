@@ -63,7 +63,7 @@ func TestHardcodedIPs(t *testing.T) {
 	lookup := New()
 	for _, tt := range tests {
 		t.Run(tt.ip, func(t *testing.T) {
-			ans, ok := lookup.LookupIpString(tt.ip)
+			ans, ok := lookup.LookupIp(tt.ip)
 			if !ok {
 				t.Errorf("Failed to lookup ip %s", tt.ip)
 			}
@@ -72,14 +72,6 @@ func TestHardcodedIPs(t *testing.T) {
 			}
 		})
 	}
-}
-
-func lookup_ip(lookup *CountryLookup, ip_number uint64) string {
-	result, ok := lookup.LookupIpNumber(ip_number)
-	if !ok {
-		return "--"
-	}
-	return result
 }
 
 func TestRandom(t *testing.T) {
@@ -104,4 +96,12 @@ func TestRandom(t *testing.T) {
 			}
 		}
 	}
+}
+
+func lookup_ip(lookup *CountryLookup, ip_number uint64) string {
+	result, ok := lookup.LookupNumericIp(ip_number)
+	if !ok {
+		return "--"
+	}
+	return result
 }

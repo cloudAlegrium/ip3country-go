@@ -67,11 +67,11 @@ func New() *CountryLookup {
 	}
 }
 
-func (l *CountryLookup) LookupIpString(ip_string string) (response string, ok bool) {
+func (l *CountryLookup) LookupIp(ip_string string) (response string, ok bool) {
 	if ip_string == "" {
 		return "", false
 	}
-	one, two, three, four, ok := GetIpNumbers(ip_string)
+	one, two, three, four, ok := getIpNumbers(ip_string)
 
 	if !ok {
 		return "", false
@@ -82,11 +82,11 @@ func (l *CountryLookup) LookupIpString(ip_string string) (response string, ok bo
 			two*65536 +
 			three*256 +
 			four)
-	return l.LookupIpNumber(ipNumber)
+	return l.LookupNumericIp(ipNumber)
 }
 
-func (l *CountryLookup) LookupIpNumber(ip_number uint64) (response string, ok bool) {
-	index := l.BinarySearch(ip_number)
+func (l *CountryLookup) LookupNumericIp(ip_number uint64) (response string, ok bool) {
+	index := l.binarySearch(ip_number)
 	cc := l.country_table[index]
 	if cc == "--" {
 		return "", false
@@ -94,7 +94,7 @@ func (l *CountryLookup) LookupIpNumber(ip_number uint64) (response string, ok bo
 	return cc, true
 }
 
-func (l *CountryLookup) BinarySearch(ip_number uint64) int {
+func (l *CountryLookup) binarySearch(ip_number uint64) int {
 	min := 0
 	max := len(l.ip_ranges) - 1
 	var mid int
@@ -110,7 +110,7 @@ func (l *CountryLookup) BinarySearch(ip_number uint64) int {
 	return min
 }
 
-func GetIpNumbers(ip_string string) (one int, two int, three int, four int, ok bool) {
+func getIpNumbers(ip_string string) (one int, two int, three int, four int, ok bool) {
 	parts := strings.Split(ip_string, ".")
 	if len(parts) != 4 {
 		return 0, 0, 0, 0, false
