@@ -15,7 +15,23 @@ This site or product includes IP2Location LITE data available from <a href="http
 ---
 
 ## Usage
-TODO
+
+Add the dependency to your `go.mod` file:
+
+```
+require (
+	github.com/statsig-io/ip3country-go v0.2.0
+)
+```
+
+```go
+lookup := countrylookup.New()
+// Lookup using ip4 str
+countryCode, ok := lookup.LookupIp("123.45.67.8") // => 'KR'
+
+// Lookup using numeric ip
+countryCode, ok = lookup.LookupNumericIp(2066563848) // => 'KR'
+```
 
 ## Accuracy
 
