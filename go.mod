@@ -1,3 +1,3 @@
-module github.com/statsig-io/ip3country-go
+module github.com/cloudAlegrium/ip3country-go
 
 go 1.16
