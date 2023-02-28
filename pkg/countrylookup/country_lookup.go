@@ -12,7 +12,7 @@ type CountryLookup struct {
 	country_table []string
 }
 
-//go:embed lookup-data/ip_supalite.table
+//go:embed lookup-data/ip_supalite.table.txt
 var b []byte
 
 func New() *CountryLookup {
